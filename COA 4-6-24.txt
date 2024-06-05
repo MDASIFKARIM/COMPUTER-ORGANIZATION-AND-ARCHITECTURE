@@ -1,0 +1,205 @@
+1st code
+.model small
+.stack 100h
+.data
+
+.code
+
+main proc
+    
+ mov bh, 09h
+ mov bl, 07h
+ add bh, bl 
+ sub bh, bl
+
+
+
+
+
+2nd code
+.model small
+.stack 100h
+.data
+
+.code
+
+main proc
+    
+ mov ah, 1  ;user input   
+ int 21h
+ mov bh, al   
+ int 21h
+  
+ 
+ 
+ 
+ add bh, al
+ sub bh, 30h 
+ 
+ 
+ 
+ mov ah,2              ;display new line
+ mov dl, 0AH
+ int 21h 
+ mov dl, 0DH
+ int 21h
+ 
+ 
+ 
+ mov ah, 2             ; display output
+ mov dl, bh
+ int 21h
+
+
+
+
+
+
+3rd code 3 input user
+
+.model small
+.stack 100h
+.data
+
+.code
+
+main proc
+    
+mov ah ,1      ;bh,bl,al 3 input
+int 21h
+mov bh , al
+int 21h
+mov bl , al
+int 21h
+             
+             
+ 
+ 
+ 
+ add bh,bl
+ add bh,al
+ sub bh,60h
+ 
+ 
+ 
+ mov ah, 2
+ mov dl,0Ah
+ int 21h
+ mov Dl ,0Dh
+ int 21h
+ mov dl,bh
+ int 21h 
+
+
+
+
+
+4th code mam show the code (5-33,3-33,2-02h)         
+.model small
+.stack 100h
+.data
+
+.code
+
+main proc
+    
+ mov ah, 1  
+ int 21h
+ mov bh, al   
+ int 21h
+  
+ 
+ 
+ 
+ add bh, al
+ sub bh, 36h 
+ 
+
+
+
+
+
+
+
+
+5th code
+.model small
+.stack 100h
+.data
+
+.code
+
+main proc
+    
+mov bh, 02h
+mov bl,03h
+add bh,bl
+ 
+ 
+ mov ah,2              
+ mov dl, 0AH
+ int 21h 
+ mov dl, 0DH
+ int 21h
+ 
+ 
+ 
+ mov ah, 2            
+ mov dl, bh
+ int 21h
+
+
+
+6th code
+.model small
+.stack 100h
+.data
+
+
+
+
+msg db "hellow world$"  
+
+
+.code
+
+main proc    
+    mov ax, @data
+    mov ds, ax  
+    
+    mov ah, 9
+    lea dx, msg
+    int 21h
+
+
+7th code
+.model small
+.stack 100h
+.data  
+
+
+name_n db "asif$"   
+id_i   db "21-44751-1$"
+mail_m db "mdasifkarim525@gmail.com$"
+
+.code   
+
+
+main proc  
+    mov ax, @data 
+    mov ds, ax  
+    
+
+    mov ah, 09h
+    lea dx, name_n
+    int 21h 
+    
+    lea dx, id_i
+    int 21h
+    
+    lea dx, mail_m
+    int 21h
+
+    mov ah, 4Ch       
+    int 21h
+
