@@ -1,0 +1,141 @@
+1. If AL ≥ A && AL ≤ Z print capital letter
+Else If AL ≥ a && AL ≤ z print small letter
+Else print unkhown letter
+Code:
+.model small
+.stack 100h
+
+.data 
+msg_cap db " :Capital letter$", 
+msg_small db "  :Small letter$", 
+msg_unknown db " :Unknown character$", 
+
+.code
+main proc
+    mov ax,@data
+    mov ds,ax 
+
+    mov ah, 1
+    int 21h     
+
+    cmp al, 'A'
+    jl check_small  
+    cmp al, 'Z'
+    jg check_small  
+
+    
+    mov ah, 9
+    lea dx, msg_cap
+    int 21h
+    jmp exit
+
+check_small:
+    cmp al, 'a'
+    jl unknown   
+    cmp al, 'z'
+    jg unknown   
+
+    
+    mov ah, 9
+    lea dx, msg_small
+    int 21h
+    jmp exit
+
+unknown:
+    mov ah, 9
+    lea dx, msg_unknown
+    int 21h
+
+exit:
+    mov ah, 4Ch
+    int 21h
+main endp
+end main
+ 
+ 
+ 
+
+
+
+2. Write a program to display ‘0’ if AL contains 1 or 3;if AL contains 2 or 4 , display “e”
+Code:
+.model small
+.stack 100h
+
+.data 
+    ml db "  :0$"
+    m2 db "  :e$"
+
+.code
+main proc
+    mov ax, @data
+    mov ds, ax
+    
+    mov ah, 1   
+    int 21h
+    
+    cmp al, '1'  
+    je display_0  
+    
+    cmp al, '2'  
+    je display_e  
+    
+    cmp al, '3'  
+    je display_0  
+    
+    cmp al, '4'  
+    je display_e  
+    
+    jmp exit  
+    
+display_0:
+    mov ah, 9   
+    lea dx, ml
+    int 21h
+    jmp exit
+    
+display_e:
+    mov ah, 9   
+    lea dx, m2
+    int 21h
+    jmp exit
+    
+exit:
+    mov ah, 4ch 
+    int 21h
+
+main endp
+end main
+
+ 
+ 
+
+
+ 
+ 
+
+
+3. display e=2a+b
+Code:
+.model small
+.stack 100h
+.data
+msg db " e=2a+b $ "
+
+.code
+mov ax, @data
+mov ds, ax
+
+mov cx, 1       
+
+l1:
+mov ah, 9       
+lea dx, msg     
+int 21h         
+loop l1         
+
+mov ah, 4Ch     
+int 21h         
+
+end             
+ 
