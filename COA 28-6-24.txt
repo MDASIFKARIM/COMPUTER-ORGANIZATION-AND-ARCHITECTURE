@@ -1,0 +1,148 @@
+1st code:
+
+.model small
+.stack 100h
+.data
+
+msg db "hellow world".0AH,0DH. '$'
+msg1 "bye world"
+
+.code
+
+mov ax,@data
+mov ds,ax 
+mov cx, 5
+
+l1:
+MOV AH, 9
+lea dx,msg
+int 21H
+dec cx
+jnz l1
+mov ah,9
+lea dx ,msg1
+int 21h
+
+
+
+
+
+code:2
+
+.model small
+.stack 100h
+.data
+.code
+main proc
+    
+    mov bl, '6'
+    mov bh, '4'
+    cmp bl, bh
+    jg l1
+    jl l2
+    jmp l3
+    
+    l1:
+    mov ah, 2
+    mov dl,bl
+    int 21h 
+    jmp exit
+    
+    l2:
+    mov ah,2
+    mov dl,bh
+    int 21h 
+    jmp exit
+    
+    l3:
+    mov ah, 2
+    mov dl, 'e'
+    int 21h
+    jmp exit 
+    
+    exit:
+    mov ah, 4ch
+    int 21h
+
+
+
+code 3:
+.model small
+.stack 100h
+
+
+.data 
+ml db "POSITIVE $"
+m2 DB "NEGATIVE $"
+m3 db "ZERO $"
+
+.code
+main proc
+     mov ax,@data
+     mov ds,ax 
+     
+     mov ah, 1
+     int 21h
+     
+     
+     cmp al, 30h
+     jg pos_
+     jl Neg_
+     jmp Equal
+     
+     
+     pos_:
+     mov ah,9
+     lea dx, ml
+     int21h
+     jmp exit
+     
+     neg_:
+     mov ah,1
+     int 21h
+     mov ah, 9
+     lea dx,m2
+     int 21h
+     jmp exit    
+            
+     equal:
+     mov ah,9
+     lea dx, m3
+     int 21h
+     exit
+     mov ah ,4ch
+     int 21h     
+
+
+code4:
+.model small
+.stack 100h
+
+
+.data 
+ml db "POSITIVE $"
+m2 DB "NEGATIVE $"
+m3 db "ZERO $"
+
+.code
+main proc
+     mov ah,1
+     int 21h
+     mov dl, al
+     
+     cmp dl, 'A'
+     jg check
+     jmp exit
+     
+     check:
+     cmp dl, 'Z'
+     jle print
+      
+     jmp exit
+      
+     print:
+     mov ah ,2
+     int 21h
+     exit:
+     mov ah,4ch
+     int 21h
