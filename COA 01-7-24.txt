@@ -1,0 +1,56 @@
+.model small
+.stack 100h
+.data
+    msg1 db "start", 0Dh, 0Ah, '$'
+    msg2 db "the end", 0Dh, 0Ah, '$'
+    a db ?
+.code
+main proc
+    mov AX, @data
+    mov DS, AX
+    
+    ; Print "start"
+    mov AH, 09h
+    lea DX, msg1
+    int 21h
+    
+    ; Print 'A'
+    mov AH, 02h
+    mov DL, 'A'
+    mov a, DL
+    int 21h
+    
+    ; Compare 'a' with '0' (not needed as `a` is already 'A')
+    ; cap a, '0'
+    
+    ; Check if 'A' is greater than '0'
+    cmp a, '0'
+    jg L1
+    
+    ; Print "the end"
+    mov AH, 09h
+    lea DX, msg2
+    int 21h
+    
+L1:
+    ; Increment 'A'
+    mov BL, a
+    inc BL
+    mov DL, BL
+    mov AH, 02h
+    int 21h
+    
+    ; Print new line
+    mov DL, 10
+    int 21h
+    
+    ; Print "the end"
+    mov AH, 09h
+    lea DX, msg2
+    int 21h
+    
+    ; Exit program
+    mov AH, 4Ch
+    int 21h
+main endp
+end main
