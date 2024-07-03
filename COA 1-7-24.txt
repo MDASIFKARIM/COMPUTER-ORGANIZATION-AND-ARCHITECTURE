@@ -1,3 +1,10 @@
+Question:"start
+          AB
+        the end"
+
+--------------------code-----------------------------
+
+
 .model small
 .stack 100h
 .data
