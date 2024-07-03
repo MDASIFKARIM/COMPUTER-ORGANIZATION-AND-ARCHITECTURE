@@ -1,0 +1,94 @@
+Enter two Alphabet: A2
+Wrong Input
+Enter Two Alphabet: MD
+In correct Order it is: DM
+
+.model small
+.stack 100h
+
+.data
+    msg_upper db 'Both are uppercase', '$'
+    msg_lower db 'Both are lowercase', '$'
+    msg_mixed db 'One uppercase, one lowercase', '$'
+    msg_unknown db 'Wrong input', '$'
+    msg_result db 'In correct order it is: ', '$'
+
+.code
+main proc
+    mov ax, @data
+    mov ds, ax
+
+    ; Read the first character
+    mov ah, 1
+    int 21h
+    mov bl, al
+
+    ; Read the second character
+    mov ah, 1
+    int 21h
+    mov bh, al
+
+    ; Check if the first character is a valid alphabet
+    cmp bl, 'A'
+    jl wrong_input
+    cmp bl, 'Z'
+    jle valid_input
+
+    cmp bl, 'a'
+    jl wrong_input
+    cmp bl, 'z'
+    jle valid_input
+
+wrong_input:
+    ; Unknown input
+    mov ah, 9
+    lea dx, msg_unknown
+    int 21h
+    jmp exit
+
+valid_input:
+    ; Check if the second character is a valid alphabet
+    cmp bh, 'A'
+    jl wrong_input
+    cmp bh, 'Z'
+    jle compare
+
+    cmp bh, 'a'
+    jl wrong_input
+    cmp bh, 'z'
+    jle compare
+
+compare:
+    ; Compare the two characters
+    cmp bl, bh
+    jle display_result
+
+    ; Swap the characters if bl > bh
+    xchg bl, bh
+
+display_result:
+    ; Display the result
+    mov ah, 9
+    lea dx, msg_result
+    int 21h
+
+    ; Print the first character
+    mov dl, bl
+    mov ah, 2
+    int 21h
+
+    ; Print the second character
+    mov dl, bh
+    int 21h
+
+    ; Print new line
+    mov dl, 13
+    int 21h
+    mov dl, 10
+    int 21h
+
+exit:
+    mov ah, 4Ch
+    int 21h
+main endp
+end main
