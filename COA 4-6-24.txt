@@ -1,4 +1,4 @@
-1st code
+------------1st code------------
 .model small
 .stack 100h
 .data
@@ -16,7 +16,7 @@ main proc
 
 
 
-2nd code
+----------2nd code----------------
 .model small
 .stack 100h
 .data
@@ -55,7 +55,7 @@ main proc
 
 
 
-3rd code 3 input user
+--------------3rd code 3 input user------------------
 
 .model small
 .stack 100h
@@ -94,7 +94,7 @@ int 21h
 
 
 
-4th code mam show the code (5-33,3-33,2-02h)         
+---------------------4th code mam show the code (5-33,3-33,2-02h) --------------------------       
 .model small
 .stack 100h
 .data
@@ -122,7 +122,7 @@ main proc
 
 
 
-5th code
+-----------------5th code---------------------
 .model small
 .stack 100h
 .data
@@ -172,7 +172,7 @@ main proc
     int 21h
 
 
-7th code
+-------------------7th code------------------
 .model small
 .stack 100h
 .data  
