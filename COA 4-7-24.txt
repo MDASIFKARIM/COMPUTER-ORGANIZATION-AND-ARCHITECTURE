@@ -1,7 +1,11 @@
-Enter two Alphabet: A2
+Question:"Enter two Alphabet: A2
 Wrong Input
 Enter Two Alphabet: MD
-In correct Order it is: DM
+In correct Order it is: DM"
+
+
+
+--------------------------------code--------------------------------
 
 .model small
 .stack 100h
