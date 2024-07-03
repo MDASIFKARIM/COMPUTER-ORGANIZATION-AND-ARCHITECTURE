@@ -1,7 +1,7 @@
 1. If AL ≥ A && AL ≤ Z print capital letter
 Else If AL ≥ a && AL ≤ z print small letter
 Else print unkhown letter
-Code:
+---------------------Code-----------------------------
 .model small
 .stack 100h
 
@@ -58,7 +58,9 @@ end main
 
 
 2. Write a program to display ‘0’ if AL contains 1 or 3;if AL contains 2 or 4 , display “e”
-Code:
+
+------------------------------------------------Code-------------------------------------------
+
 .model small
 .stack 100h
 
@@ -116,7 +118,8 @@ end main
 
 
 3. display e=2a+b
-Code:
+------------------------Code-----------------
+
 .model small
 .stack 100h
 .data
