@@ -1,98 +1,128 @@
-Question:"Enter two Alphabet: A2
-Wrong Input
-Enter Two Alphabet: MD
-In correct Order it is: DM"
+give an input A
+output capital letter
+give input a
+output small letter
+give input 1
+output it is number
+give input :?
+output unkhnown
 
 
 
---------------------------------code--------------------------------
+
+enter any number 2
+enter any number 3
+enter any number A
+
+error!
+enter any number 2
+summation 1st ,2nd, and 3rd number is 722
+
+
 
 .model small
 .stack 100h
-
 .data
-    msg_upper db 'Both are uppercase', '$'
-    msg_lower db 'Both are lowercase', '$'
-    msg_mixed db 'One uppercase, one lowercase', '$'
-    msg_unknown db 'Wrong input', '$'
-    msg_result db 'In correct order it is: ', '$'
-
+msg1 db "Enter any number: $"
+msg2 db "Error!$", 0Ah, 0Dh, '$'
+msg3 db "Summation of 1st, 2nd and 3rd is $"
+msg4 db 0Ah, 0Dh, '$'
+num db ?      
+num1 db ?     
+num2 db ?     
+num3 db ?     
+sum db ?      
+ 
 .code
 main proc
     mov ax, @data
     mov ds, ax
-
-    ; Read the first character
+ 
+start_input:
+    ; Input the first number
+    mov ah, 9
+    lea dx, msg1
+    int 21h
+ 
     mov ah, 1
     int 21h
-    mov bl, al
-
-    ; Read the second character
+    mov num1, al
+ 
+    ; Validate the first input
+    cmp al, '0'
+    jl invalid_input
+    cmp al, '9'
+    jg invalid_input
+ 
+    ; Input the second number
+    mov ah, 9
+    lea dx, msg1
+    int 21h
+ 
     mov ah, 1
     int 21h
-    mov bh, al
-
-    ; Check if the first character is a valid alphabet
-    cmp bl, 'A'
-    jl wrong_input
-    cmp bl, 'Z'
-    jle valid_input
-
-    cmp bl, 'a'
-    jl wrong_input
-    cmp bl, 'z'
-    jle valid_input
-
-wrong_input:
-    ; Unknown input
+    mov num2, al
+ 
+    ; Validate the second input
+    cmp al, '0'
+    jl invalid_input
+    cmp al, '9'
+    jg invalid_input
+ 
+    ; Input the third number
     mov ah, 9
-    lea dx, msg_unknown
+    lea dx, msg1
     int 21h
-    jmp exit
-
-valid_input:
-    ; Check if the second character is a valid alphabet
-    cmp bh, 'A'
-    jl wrong_input
-    cmp bh, 'Z'
-    jle compare
-
-    cmp bh, 'a'
-    jl wrong_input
-    cmp bh, 'z'
-    jle compare
-
-compare:
-    ; Compare the two characters
-    cmp bl, bh
-    jle display_result
-
-    ; Swap the characters if bl > bh
-    xchg bl, bh
-
-display_result:
-    ; Display the result
+ 
+    mov ah, 1
+    int 21h
+    mov num3, al
+ 
+    ; Validate the third input
+    cmp al, '0'
+    jl invalid_input
+    cmp al, '9'
+    jg invalid_input
+ 
+    ; Calculate the sum
+    sub num1, '0'      ; Convert ASCII to numeric
+    sub num2, '0'      ; Convert ASCII to numeric
+    sub num3, '0'      ; Convert ASCII to numeric
+ 
+    mov al, num1
+    add al, num2
+    add al, num3
+    mov sum, al
+ 
+    ; Print the result
     mov ah, 9
-    lea dx, msg_result
+    lea dx, msg4
     int 21h
-
-    ; Print the first character
-    mov dl, bl
+ 
+    mov ah, 9
+    lea dx, msg3
+    int 21h
+ 
     mov ah, 2
+    mov dl, sum
+    add dl, '0'       ; Convert to ASCII
     int 21h
-
-    ; Print the second character
-    mov dl, bh
+ 
+    ; Exit the program
+    mov ah, 4ch
     int 21h
-
-    ; Print new line
-    mov dl, 13
+ 
+invalid_input:
+    ; Print error message and restart input
+    mov ah, 9
+    lea dx, msg4
     int 21h
-    mov dl, 10
+ 
+    mov ah, 9
+    lea dx, msg2
     int 21h
-
-exit:
-    mov ah, 4Ch
-    int 21h
+ 
+    jmp start_input
+ 
 main endp
 end main
