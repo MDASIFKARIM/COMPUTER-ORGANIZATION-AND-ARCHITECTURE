@@ -1,3 +1,4 @@
+-----------------------------------------------
 give an input A
 output capital letter
 give input a
@@ -6,7 +7,7 @@ give input 1
 output it is number
 give input :?
 output unkhnown
-
+-----------------QUESTION-----------------------
 
 
 
