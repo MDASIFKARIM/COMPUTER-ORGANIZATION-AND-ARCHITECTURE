@@ -1,0 +1,206 @@
+------------------1st code(LOOP)--------------------
+
+.model small
+.stack 100h
+.data
+.code
+
+main proc
+    mov bx, 88h          ; Load 88h into BX
+    xor ax, ax           ; Clear AX register
+    
+    mov cx, 16           ; Set up loop counter
+
+loop_start:    
+    rol bx, 1            ; Rotate BX left by 1 bit
+    jnc no_interrupt     ; Jump if no carry (NC)
+    
+    int 10h              ; Call interrupt (INT 10h for video services)
+
+no_interrupt:
+    loop loop_start      ; Decrement CX and repeat if CX != 0
+
+    mov ah, 4Ch          ; Terminate program
+    int 21h              ; DOS interrupt to exit
+main endp
+end main
+
+
+-------------------2nd code(LOOP Reverse)--------------------------
+.model small 
+.stack 100h
+.data
+.code
+
+
+main proc
+    
+    mov cx,8
+    xor bx,bx
+    mov al, 0ACh
+    
+    Reverse:
+    shl al,1
+    rcr bl,1
+    loop Reverse
+    
+    mov al,bl
+
+
+
+--------------------3rd code-----------------------------------
+USER INPUT:101101011001
+OUTPUT:    0000101101011001
+-------------------------PART1---------------------------------
+.model small 
+.stack 100h
+.data
+.code
+
+
+main proc
+    
+    mov cx,16
+    xor bx,bx
+    mov al, 3A2Bh
+    
+    Reverse:
+    shl al,1
+    rcr bl,1
+    loop Reverse
+
+4th code
+.model small 
+.stack 100h
+.data
+
+
+
+msg1 db "enter binary Input : $"
+msg2 db "binary Output : $"
+
+.code 
+ main proc
+    mov ax,@data
+    mov ds,ax
+    
+    mov ah,9
+    lea dx,msg1
+    int 21h
+    
+    mov ah,1
+    mov cx,16
+      
+      input:
+      
+      int 21h
+      cmp al,0Dh
+      je output
+      
+      
+      sub al,38h
+      shl bx,1
+      or bl,al
+      loop input
+      
+      output:
+      mov ah,2
+      mov dl,10
+      int 21h
+      mov dl,13
+      int 21h
+      mov ah,9
+      lea dx,msg2
+      int 21h
+      mov cx,16
+      
+      
+      check:
+      shl bx,1
+      jc ONE
+      mov AH,2
+      mov dl, '0'
+      int 21h
+      loop check
+      
+      ONE:
+      mov ah,2
+      mov dl,'1'
+      int 21h
+      loop check
+    
+    mov ax,bx
+
+-------------------------PART2---------------------------------
+
+.model small
+.stack 100h
+.data
+    msg1 db "Enter binary Input: $"
+    msg2 db "Binary Output: $"
+.code
+main proc
+    mov ax, @data      ; Initialize data segment
+    mov ds, ax
+    
+    ; Display input message
+    mov ah, 9
+    lea dx, msg1
+    int 21h
+    
+    ; Input binary number
+    xor bx, bx         ; Clear BX (will hold the binary number)
+    mov cx, 16         ; Expecting 16 bits
+    
+input_loop:
+    mov ah, 1          ; Read a character
+    int 21h
+    cmp al, 0Dh        ; Check for Enter key (Carriage return)
+    je output_display  ; If Enter is pressed, go to output
+
+    sub al, '0'        ; Convert ASCII to binary (0 or 1)
+    shl bx, 1          ; Shift BX left to make space for next bit
+    or bl, al          ; Store the input bit into BX
+    loop input_loop    ; Repeat until all bits are entered
+
+output_display:
+    ; Print newline
+    mov ah, 2
+    mov dl, 10         ; Newline character (LF)
+    int 21h
+    mov dl, 13         ; Carriage return (CR)
+    int 21h
+    
+    ; Display output message
+    mov ah, 9
+    lea dx, msg2
+    int 21h
+
+    ; Output the binary number stored in BX
+    mov cx, 16         ; 16 bits to output
+
+output_loop:
+    shl bx, 1          ; Shift BX left to bring MSB to carry flag
+    jc print_one       ; If carry flag is set, print '1'
+    
+    ; Print '0'
+    mov ah, 2
+    mov dl, '0'
+    int 21h
+    loop output_loop   ; Repeat for all 16 bits
+    jmp done
+    
+print_one:
+    ; Print '1'
+    mov ah, 2
+    mov dl, '1'
+    int 21h
+    loop output_loop   ; Repeat for all 16 bits
+
+done:
+    ; Program end
+    mov ah, 4ch
+    int 21h
+
+main endp
+end main
