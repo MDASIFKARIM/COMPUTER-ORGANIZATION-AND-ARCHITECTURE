@@ -1,0 +1,58 @@
+---------HEXA Input and Output----------------
+
+.model small
+.stack 100h
+.data
+ 
+a db 'Enter Hexa Input  : $'
+b db 10,13, 'Hexa Output : $'
+ 
+.code
+    main proc
+    mov ax,@Data
+    mov ds,ax
+    mov ah,9
+    lea dx,a
+    int 21h 
+    
+    mov bx,0
+    mov cx,4
+    INPUT:
+    mov ah,1
+    int 21h
+    cmp al,13 ; pressed 'enter' or not
+    je OUTPUT_
+    cmp al,41h ; A or Upper
+    jge letter
+    and al,0Fh ; ascii to decimal
+    jmp shift
+    letter:
+    sub al,37h ; 41h - 37h = A (10)
+    shift:  
+    shl bx,4
+    or bl,al
+    loop INPUT
+    OUTPUT_:
+    mov ah,9
+    lea dx,b
+    int 21h  
+    mov cx,4
+    mov ah,2
+    OUTPUT_1:
+    mov dl,bh
+    shr dl,4
+    rol bx,4
+    cmp dl,10
+    jge output_letter 
+    add dl,30h ; decimal to ascii 
+    int 21h
+    jmp EXIT_1
+    output_letter:
+    add dl,37h ; convert back 10 to A
+    int 21h
+    EXIT_1:
+    loop OUTPUT_1
+    mov ah,4ch
+    int 21h
+    main endp
+    end
