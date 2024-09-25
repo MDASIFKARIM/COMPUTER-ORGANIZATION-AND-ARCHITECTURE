@@ -1,0 +1,123 @@
+Write an assemble language program that involves three different procedures, each performing a specific task on hex inputs and hex outputs. 
+After obtaining the output from the first procedure, write a second procedure that converts the output in binary and prints it in reverse pattern.
+The third procedure accepts a Capital letter as input and converts it into Lower letter. [Use logic Operations]
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+.MODEL SMALL
+.STACK 100H
+.DATA
+    hex_prompt DB 'Enter Hex Input: $'
+    bin_prompt DB 'Hex to Binary (Reversed): $'
+    cap_prompt DB 'Enter Capital Letter: $'
+    cap_to_small DB 'In Lowercase: $'
+    newline DB 10, 13, '$'
+    hex_in DB 4 DUP(?) 
+    bin_out DB 16 DUP('0') 
+    letter DB ? 
+.CODE
+
+MAIN PROC
+    MOV AX, @DATA
+    MOV DS, AX
+
+    CALL HEX_INPUT
+    CALL HEX_TO_BIN_REVERSE
+    CALL CONVERT_CAP_TO_SMALL
+
+    MOV AH, 4CH
+    INT 21H
+MAIN ENDP
+
+HEX_INPUT PROC
+    LEA DX, hex_prompt
+    MOV AH, 09H
+    INT 21H
+
+    MOV CX, 4
+    XOR BX, BX  
+INPUT_LOOP:
+    MOV AH, 1  
+    INT 21H
+    CMP AL, 0DH  
+    JE PRINT_HEX
+
+    CMP AL, '9'
+    JLE DIGIT
+    AND AL, 0DFH  
+    SUB AL, 37H   
+    JMP CONVERTED
+DIGIT:
+    SUB AL, '0'   
+CONVERTED:
+    SHL BX, 4     
+    OR BL, AL     
+    LOOP INPUT_LOOP
+
+PRINT_HEX:
+    MOV DX, BX    
+    RET
+HEX_INPUT ENDP
+
+HEX_TO_BIN_REVERSE PROC
+    LEA DX, bin_prompt
+    MOV AH, 09H
+    INT 21H
+
+    MOV CX, 16    
+    MOV AX, BX    
+BIN_REVERSE_LOOP:
+    SHR AX, 1     
+    JC PRINT_ONE
+    MOV DL, '0'
+    JMP PRINT_BIN
+PRINT_ONE:
+    MOV DL, '1'
+PRINT_BIN:
+    MOV AH, 02H
+    INT 21H
+    LOOP BIN_REVERSE_LOOP
+
+    LEA DX, newline
+    MOV AH, 09H
+    INT 21H
+    RET
+HEX_TO_BIN_REVERSE ENDP
+
+CONVERT_CAP_TO_SMALL PROC
+    LEA DX, cap_prompt
+    MOV AH, 09H
+    INT 21H
+
+    MOV AH, 1
+    INT 21H
+    MOV letter, AL
+
+    CMP AL, 'A'
+    JL INVALID_INPUT
+    CMP AL, 'Z'
+    JG INVALID_INPUT
+
+    OR AL, 00100000B
+    MOV letter, AL
+
+    LEA DX, cap_to_small
+    MOV AH, 09H
+    INT 21H
+
+    MOV DL, letter
+    MOV AH, 02H
+    INT 21H
+
+    LEA DX, newline
+    MOV AH, 09H
+    INT 21H
+    RET
+
+INVALID_INPUT:
+    LEA DX, newline
+    MOV AH, 09H
+    INT 21H
+    RET
+CONVERT_CAP_TO_SMALL ENDP
+
+END MAIN
