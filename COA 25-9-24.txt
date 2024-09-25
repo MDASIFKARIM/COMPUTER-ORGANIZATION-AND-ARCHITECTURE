@@ -5,119 +5,161 @@ The third procedure accepts a Capital letter as input and converts it into Lower
 
 .MODEL SMALL
 .STACK 100H
-.DATA
-    hex_prompt DB 'Enter Hex Input: $'
-    bin_prompt DB 'Hex to Binary (Reversed): $'
-    cap_prompt DB 'Enter Capital Letter: $'
-    cap_to_small DB 'In Lowercase: $'
-    newline DB 10, 13, '$'
-    hex_in DB 4 DUP(?) 
-    bin_out DB 16 DUP('0') 
-    letter DB ? 
-.CODE
 
+.DATA
+    msg1 DB 'Enter Hexa Input : $'
+    msg2 DB 'Binary Output (Reversed): $'
+    msg3 DB 'Enter a Capital Letter: $'
+    msg4 DB 'Lowercase Output : $'
+    newline DB 13, 10, '$'  ; Carriage return + Line feed
+    hex_input DW 0          ; Storage for hex input
+    letter DB ?             ; Storage for the letter input
+
+.CODE
 MAIN PROC
     MOV AX, @DATA
     MOV DS, AX
-
-    CALL HEX_INPUT
-    CALL HEX_TO_BIN_REVERSE
-    CALL CONVERT_CAP_TO_SMALL
-
+    
+    CALL HexInputOutput     ; Call first procedure to handle Hex input/output
+    CALL ConvertToBinary    ; Call second procedure to convert to binary and reverse the output
+    CALL CapitalToLower     ; Call third procedure to convert capital to lowercase letter
+    
     MOV AH, 4CH
     INT 21H
 MAIN ENDP
 
-HEX_INPUT PROC
-    LEA DX, hex_prompt
+;----------------------------------------
+; Procedure 1: Hex Input and Output
+;----------------------------------------
+HexInputOutput PROC
+    ; Display prompt for hex input
+    LEA DX, msg1
     MOV AH, 09H
     INT 21H
+    
+    ; Read 4-digit hex input (each digit is 4 bits, total 16 bits)
+    XOR BX, BX         ; Clear BX
+    MOV CX, 4          ; 4 hex digits to input
+    
+    HexInputLoop:
+        MOV AH, 01H     ; Read a character
+        INT 21H
+        CMP AL, 0DH     ; If 'Enter', stop
+        JE HexInputDone
+        CMP AL, 'A'
+        JB ConvertNumber ; Check if it's a digit
+        CMP AL, 'F'
+        JA ConvertNumber ; Check if it's a valid hex character
+        
+        ; Convert ASCII letter A-F to 10-15
+        SUB AL, 37H
+        JMP StoreHexDigit
 
-    MOV CX, 4
-    XOR BX, BX  
-INPUT_LOOP:
-    MOV AH, 1  
-    INT 21H
-    CMP AL, 0DH  
-    JE PRINT_HEX
-
-    CMP AL, '9'
-    JLE DIGIT
-    AND AL, 0DFH  
-    SUB AL, 37H   
-    JMP CONVERTED
-DIGIT:
-    SUB AL, '0'   
-CONVERTED:
-    SHL BX, 4     
-    OR BL, AL     
-    LOOP INPUT_LOOP
-
-PRINT_HEX:
-    MOV DX, BX    
-    RET
-HEX_INPUT ENDP
-
-HEX_TO_BIN_REVERSE PROC
-    LEA DX, bin_prompt
-    MOV AH, 09H
-    INT 21H
-
-    MOV CX, 16    
-    MOV AX, BX    
-BIN_REVERSE_LOOP:
-    SHR AX, 1     
-    JC PRINT_ONE
-    MOV DL, '0'
-    JMP PRINT_BIN
-PRINT_ONE:
-    MOV DL, '1'
-PRINT_BIN:
-    MOV AH, 02H
-    INT 21H
-    LOOP BIN_REVERSE_LOOP
-
+    ConvertNumber:
+        SUB AL, 30H      ; Convert ASCII '0'-'9' to 0-9
+        
+    StoreHexDigit:
+        SHL BX, 4        ; Make room for next 4 bits
+        OR BL, AL        ; Store the hex digit in BX
+        LOOP HexInputLoop
+    
+    HexInputDone:
+    ; Store the input in hex_input for later use
+    MOV hex_input, BX
+    
+    ; Print newline after input
     LEA DX, newline
     MOV AH, 09H
     INT 21H
+    
     RET
-HEX_TO_BIN_REVERSE ENDP
+HexInputOutput ENDP
 
-CONVERT_CAP_TO_SMALL PROC
-    LEA DX, cap_prompt
+;----------------------------------------
+; Procedure 2: Convert to Binary and Print Reversed
+;----------------------------------------
+ConvertToBinary PROC
+    ; Display binary output message
+    LEA DX, msg2
     MOV AH, 09H
     INT 21H
+    
+    ; Load the hex input for conversion
+    MOV BX, hex_input
+    MOV CX, 16         ; 16 bits to process
+    
+BinaryOutputLoop:
+    SHL BX, 1          ; Shift left, MSB goes to Carry Flag
+    JC PrintOne
+    ; Print '0'
+    MOV DL, '0'
+    JMP PrintChar
+    
+PrintOne:
+    ; Print '1'
+    MOV DL, '1'
 
-    MOV AH, 1
+PrintChar:
+    MOV AH, 02H        ; Display character
     INT 21H
-    MOV letter, AL
+    LOOP BinaryOutputLoop ; Repeat until all bits are processed
+    
+    ; Print newline after output
+    LEA DX, newline
+    MOV AH, 09H
+    INT 21H
+    
+    RET
+ConvertToBinary ENDP
 
+;----------------------------------------
+; Procedure 3: Capital to Lowercase Conversion
+;----------------------------------------
+CapitalToLower PROC
+    ; Display prompt for letter input
+    LEA DX, msg3
+    MOV AH, 09H
+    INT 21H
+    
+    ; Read a capital letter
+    MOV AH, 01H
+    INT 21H
+    MOV letter, AL      ; Store the letter
+    
+    ; Print newline after input
+    LEA DX, newline
+    MOV AH, 09H
+    INT 21H
+    
+    ; Check if the letter is capital A-Z
     CMP AL, 'A'
-    JL INVALID_INPUT
+    JL InvalidInput
     CMP AL, 'Z'
-    JG INVALID_INPUT
-
-    OR AL, 00100000B
+    JG InvalidInput
+    
+    ; Convert to lowercase
+    OR AL, 20H
     MOV letter, AL
-
-    LEA DX, cap_to_small
+    
+    ; Display the lowercase result
+    LEA DX, msg4
     MOV AH, 09H
     INT 21H
-
+    
     MOV DL, letter
     MOV AH, 02H
     INT 21H
-
+    
+    ; Print newline after output
     LEA DX, newline
     MOV AH, 09H
     INT 21H
+    
     RET
-
-INVALID_INPUT:
-    LEA DX, newline
-    MOV AH, 09H
-    INT 21H
+    
+InvalidInput:
+    ; Handle invalid input (Optional)
     RET
-CONVERT_CAP_TO_SMALL ENDP
+CapitalToLower ENDP
 
 END MAIN
