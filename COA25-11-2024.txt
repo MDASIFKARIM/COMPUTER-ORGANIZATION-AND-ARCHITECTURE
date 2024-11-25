@@ -1,0 +1,144 @@
+.model small
+.stack 100h
+
+.data
+    msg_question db "Enter two decimal digits which sum < 10: $"
+    msg_result db "You entered: $"
+    msg_sum db "Their sum is: $"
+    msg_invalid db "Invalid input. The sum must be less than 10.$"
+    digit_prompt db "Enter the first digit: $"
+    digit_prompt2 db "Enter the second digit: $"
+
+.code
+main:
+   
+    mov ax, @data
+    mov ds, ax  
+    
+     mov dl, '?'          
+    mov ah, 02h         
+    int 21h   
+    
+      mov ah, 2
+    mov dl, 0Dh
+    int 21h 
+    mov dl, 0Ah
+    int 21h
+
+
+    mov ah, 09h
+    lea dx, digit_prompt
+    int 21h
+ 
+    mov ah, 01h          
+    int 21h
+    sub al, '0'        
+    mov bl, al            
+    
+     mov ah, 2
+    mov dl, 0Dh
+    int 21h 
+    mov dl, 0Ah
+    int 21h
+
+  
+    mov ah, 09h
+    lea dx, digit_prompt2
+    int 21h      
+   
+    mov ah, 01h           
+    int 21h
+    sub al, '0'     
+    mov cl, al             
+    
+      mov ah, 2
+    mov dl, 0Dh
+    int 21h 
+    mov dl, 0Ah
+    int 21h
+
+   
+    add bl, cl         
+    cmp bl, 10           
+    ja invalid_input     
+
+    mov ah, 2
+    mov dl, 0Dh
+    int 21h 
+    mov dl, 0Ah
+    int 21h
+
+
+    mov ah, 09h
+    lea dx, msg_result
+    int 21h
+    
+      mov ah, 2
+    mov dl, 0Dh
+    int 21h 
+    mov dl, 0Ah
+    int 21h
+
+    
+    mov al, bl           
+    sub al, cl           
+    add al, '0'          
+    mov dl, al
+    mov ah, 02h
+    int 21h 
+    
+      mov ah, 2
+    mov dl, 0Dh
+    int 21h 
+    mov dl, 0Ah
+    int 21h
+
+    mov al, cl            
+    add al, '0'           
+    mov dl, al
+    mov ah, 02h
+    int 21h 
+    
+      mov ah, 2
+    mov dl, 0Dh
+    int 21h 
+    mov dl, 0Ah
+    int 21h 
+
+  
+    mov ah, 09h
+    lea dx, msg_sum
+    int 21h 
+    
+      mov ah, 2
+    mov dl, 0Dh
+    int 21h 
+    mov dl, 0Ah
+    int 21h
+
+
+    mov al, bl           
+    add al, '0'           
+    mov dl, al
+    mov ah, 02h           
+    int 21h
+
+     mov ah, 2
+    mov dl, 0Dh
+    int 21h 
+    mov dl, 0Ah
+    int 21h
+
+    mov ah, 4Ch          
+    int 21h
+
+invalid_input:
+   
+    mov ah, 09h
+    lea dx, msg_invalid
+    int 21h
+
+   
+    mov ah, 4Ch
+    int 21h
+end main
